@@ -1,0 +1,10 @@
+{
+  "name": "node-silk",
+  "version": "0.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/KonataDev/node-silk",
+  "author": "TheSnowfield & takayama",
+  "license": "MIT",
+  "description": "silk codec bindings for Node.js",
+  "keywords": ["silk", "pcm", "codec", "mp3", "wav", "audio"]
+}

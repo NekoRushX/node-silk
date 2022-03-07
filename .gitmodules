@@ -1,0 +1,3 @@
+[submodule "libSilkCodec"]
+	path = libSilkCodec
+	url = https://github.com/KonataDev/libSilkCodec

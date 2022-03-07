@@ -3,8 +3,21 @@
   "version": "0.0.0",
   "main": "index.js",
   "repository": "https://github.com/KonataDev/node-silk",
-  "author": "TheSnowfield & takayama",
+  "author": "KonataDev",
   "license": "MIT",
   "description": "silk codec bindings for Node.js",
+  "dependencies": {
+    "nan": "^2.14.2",
+    "node-pre-gyp": "^0.11.0"
+  },
+  "binary": {
+    "module_name": "node-silk",
+    "module_path": "./lib/binding/{node_abi}-{platform}-{arch}",
+    "remote_path": "./KonataDev/node-silk/releases/download/v{version}/{toolset}/",
+    "host": "https://github.com"
+  },
+  "scripts": {
+    "install": "node-pre-gyp install --fallback-to-build"
+  },
   "keywords": ["silk", "pcm", "codec", "mp3", "wav", "audio"]
 }

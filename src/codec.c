@@ -1,6 +1,7 @@
 #include <node_api.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #include <common.h>
 #include <codec.h>
@@ -24,9 +25,10 @@ void _silkCodec(void* userdata, unsigned char* p, int len) {
   {
     // create a block
     codec_data_t *_block = malloc(sizeof(codec_data_t));
-    _block->block = malloc(len);
+    memset(_block, 0x00, sizeof(codec_data_t));
 
     // copy data to block
+    _block->block = malloc(len);
     memcpy(_block->block, p, len);
 
     // set length
@@ -36,11 +38,14 @@ void _silkCodec(void* userdata, unsigned char* p, int len) {
     if(!_context->entry)
       _context->entry = _block;
 
-    if(_context->end)
-      _context->end->next = _block;
-
+    if(!_context->end)
       _context->end = _block;
-      _context->total += len;
+    else {
+      _context->end->next = _block;
+      _context->end = _block;
+    }
+     
+    _context->total += len;
   }
 }
 
@@ -61,7 +66,7 @@ napi_value _silkEncode(napi_env env, napi_callback_info info) {
 
   // get the buffer
   size_t _length;
-  uint8_t *_buffer = NULL;
+  void *_buffer = NULL;
   NAPI(napi_get_buffer_info(env, _args[0], &_buffer, &_length));
 
   // make userdata
@@ -69,7 +74,7 @@ napi_value _silkEncode(napi_env env, napi_callback_info info) {
   memset(_data, 0x00, sizeof(codec_ctx_t));
 
   // encode
-  int result = silkEncode(_buffer, _length, 24000, _silkCodec, _data);
+  int result = silkEncode((unsigned char *)_buffer, _length, 24000, _silkCodec, _data);
   if (!result) {
     napi_throw_type_error(env, "node-silk", "Failed to encode.");
     return napi_undefined;
@@ -77,10 +82,12 @@ napi_value _silkEncode(napi_env env, napi_callback_info info) {
 
   // collect and destroy blocks
   codec_data_t* _next = _data->entry;
-  uint8_t *_buffer_pos = malloc(_data->total);
+  void* _buffer_pos = malloc(_data->total);
 
-  _buffer =_buffer_pos;
+  _buffer = _buffer_pos;
   
+  FILE * _fd = fopen("out.slk", "a+");
+
   while(_next) {
 
     // copy the data
@@ -97,12 +104,12 @@ napi_value _silkEncode(napi_env env, napi_callback_info info) {
     _next = _nxt;
   }
 
-  napi_throw_type_error(env, "node-silk", "12");
-  return napi_undefined;
+  fwrite(_buffer, _data->total, 1, _fd);
+  fclose(_fd);
 
   // create buffer object
   napi_value _n_buffer = NULL;
-  NAPI(napi_create_buffer(env, _data->total, &_buffer, &_n_buffer));
+  NAPI(napi_create_buffer_copy(env, _data->total, _buffer, NULL, &_n_buffer));
 
   return _n_buffer;
 }
@@ -115,14 +122,14 @@ static napi_value ModuleInit(napi_env env, napi_value exports)
 {
   napi_property_descriptor _napi_prop[] = {
     {
-        .utf8name = "silkEncode",
-        .method = _silkEncode,
-        .attributes = napi_default,
+      .utf8name = "silkEncode",
+      .method = _silkEncode,
+      .attributes = napi_default,
     },
     {
-        .utf8name = "silkDecode",
-        .method = _silkDecode,
-        .attributes = napi_default,
+      .utf8name = "silkDecode",
+      .method = _silkDecode,
+      .attributes = napi_default,
     }
   };
 

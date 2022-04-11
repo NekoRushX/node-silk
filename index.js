@@ -19,8 +19,11 @@ const fs = require("fs")
 // }
 
 // module.exports = require("./lib/binding/node-v83-win32-x64/node-silk.node")
-var pcm = fs.readFileSync("D:/Tencent Files//FileRecv/konata_test.pcm")
+var pcm = fs.readFileSync("D:/konata_test.pcm")
 console.log(silkEncode, pcm)
-var slk = silkEncode(pcm)
-console.log(1)
+var slk = silkEncode(pcm, d => {
+	console.log(1)
+	console.log(d)
+})
+// console.log(1)
 console.log(slk)

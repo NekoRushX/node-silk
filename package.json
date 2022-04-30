@@ -1,14 +1,15 @@
 {
   "name": "node-silk",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "main": "index.js",
+  "types": "index.d.ts",
   "repository": "https://github.com/KonataDev/node-silk",
-  "author": "KonataDev",
+  "author": "NekoRushX",
   "license": "MIT",
   "description": "silk codec bindings for Node.js",
   "dependencies": {
-    "nan": "^2.15.0",
-    "@mapbox/node-pre-gyp": "^1.0.9"
+    "@mapbox/node-pre-gyp": "^1.0.9",
+    "nan": "^2.15.0"
   },
   "binary": {
     "module_name": "node-silk",
@@ -19,5 +20,24 @@
   "scripts": {
     "install": "node-pre-gyp install --fallback-to-build"
   },
-  "keywords": ["silk", "pcm", "codec", "mp3", "wav", "audio"]
+  "keywords": [
+    "silk",
+    "pcm",
+    "codec",
+    "mp3",
+    "wav",
+    "audio"
+  ],
+  "files": [
+    "src",
+    "libSilkCodec",
+    "!libSilkCodec/**/test",
+    "!libSilkCodec/**/SILK_SDK_SRC_FIX_v1.0.9",
+    "!libSilkCodec/**/SILK_SDK_SRC_FLP_v1.0.9",
+    "!libSilkCodec/**/test_vectors",
+    "!libSilkCodec/**/doc",
+    "binding.gyp",
+    "index.js",
+    "index.d.ts"
+  ]
 }
